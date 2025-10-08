@@ -9,10 +9,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 import generic_utility.FileUtility;
+import generic_utility.WebDriverUtility;
 
 public class CreateContactTest {
 
@@ -21,7 +21,7 @@ public class CreateContactTest {
 FileUtility fUtil = new FileUtility();
 		
 //		Get the data from properties file
-		String BROWSER = fUtil.getDataFromPropertiesFile("bro");
+// 		String BROWSER = fUtil.getDataFromPropertiesFile("bro");
 		String URL = fUtil.getDataFromPropertiesFile("url");
 		String USERNAME = fUtil.getDataFromPropertiesFile("un");
 		String PASSWORD = fUtil.getDataFromPropertiesFile("pwd");
@@ -52,7 +52,7 @@ FileUtility fUtil = new FileUtility();
 
 		WebElement fNDD = driver.findElement(By.cssSelector("select[name='salutationtype']"));
 		Select fn = new Select(fNDD);
-		fn.selectByContainsVisibleText("Mr.");
+		fn.selectByVisibleText("Mr.");
 		Thread.sleep(3000);
 
 		WebElement firstNameField = driver.findElement(By.name("firstname"));
@@ -80,7 +80,7 @@ FileUtility fUtil = new FileUtility();
 			if (driver.getCurrentUrl().contains("Accounts")) {
 				Thread.sleep(5000);
 				driver.findElement(By.id("1")).click();
-
+				break;
 			}
 		}
 
@@ -98,9 +98,16 @@ FileUtility fUtil = new FileUtility();
 		}
 
 		WebElement profilePic = driver.findElement(By.cssSelector("img[src='themes/softed/images/user.PNG']"));
-		Actions act = new Actions(driver);
-		act.moveToElement(profilePic).build().perform();
+		
+		WebDriverUtility wdUtil = new WebDriverUtility(driver);
+		
+		//Actions act = new Actions(driver);
+		//act.moveToElement(profilePic).build().perform();
+		wdUtil.hover(profilePic);
+		
 		Thread.sleep(3000);
+		
+		
 		driver.findElement(By.linkText("Sign Out")).click();
 		Thread.sleep(3000);
 
