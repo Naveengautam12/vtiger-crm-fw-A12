@@ -1,72 +1,67 @@
 package contacts;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Set;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
+import Base_utility.BaseClass;
 import generic_utility.FileUtility;
-import generic_utility.WebDriverUtility;
+import object_repository.ContPage;
+import object_repository.HomePage;
+import object_repository.NewContPage;
+import object_repository.verifyContPage;
 
-public class CreateContactTest {
+public class CreateContactTest extends BaseClass {
 
-	public static void main(String[] args) throws InterruptedException, EncryptedDocumentException, IOException {
+	@Test
+	public void createContTest() throws IOException, InterruptedException {
+	
+	//public static void main(String[] args) throws InterruptedException, EncryptedDocumentException, IOException {
 
-FileUtility fUtil = new FileUtility();
+		FileUtility fUtil = new FileUtility();
 		
 //		Get the data from properties file
-// 		String BROWSER = fUtil.getDataFromPropertiesFile("bro");
-		String URL = fUtil.getDataFromPropertiesFile("url");
-		String USERNAME = fUtil.getDataFromPropertiesFile("un");
-		String PASSWORD = fUtil.getDataFromPropertiesFile("pwd");
+ 		
+		
+//		String USERNAME = fUtil.getDataFromPropertiesFile("un");
+//		String PASSWORD = fUtil.getDataFromPropertiesFile("pwd");
 		
 //		Get the data from excel file
 		String fName = fUtil.getStringDataFromExcelFile("contdetalis", 11, 0);
 		
-		
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-
-		driver.get(URL);
-		
-		WebElement username = driver.findElement(By.name("user_name"));
-		username.sendKeys(USERNAME);
-
-		WebElement password = driver.findElement(By.name("user_password"));
-		password.sendKeys(PASSWORD);
-
-		driver.findElement(By.id("submitButton")).click();
-		Thread.sleep(3000);
-
-		driver.findElement(By.linkText("Contacts")).click();
+		HomePage hp = new HomePage(driver);
+		hp.getcontLink().click();
 		Thread.sleep(2000);
+		
+		ContPage cp = new ContPage(driver);
+		
+		cp.getContPlusIcon().click();
 
-		driver.findElement(By.cssSelector("img[alt='Create Contact...']")).click();
-
-		WebElement fNDD = driver.findElement(By.cssSelector("select[name='salutationtype']"));
+		WebElement fNDD = cp.getfNDD();
 		Select fn = new Select(fNDD);
 		fn.selectByVisibleText("Mr.");
 		Thread.sleep(3000);
 
-		WebElement firstNameField = driver.findElement(By.name("firstname"));
+		WebElement firstNameField = cp.getfirstNameField();
 		String firstName = fName;
 		firstNameField.sendKeys(firstName);
 		Thread.sleep(2000);
 
-		WebElement firstLastField = driver.findElement(By.name("lastname"));
+		WebElement firstLastField = cp.getfirstLastField();
 		String lastName = "kumar";
 		firstLastField.sendKeys(lastName);
 		Thread.sleep(2000);
-
+		
+		NewContPage ncp = new NewContPage(driver);
+		
+		ncp.getContPlusIcon1().click();
+		
 		String PID = driver.getWindowHandle();
-		driver.findElement(By.cssSelector("img[alt='Select']")).click();
+		ncp.getContPlusIcon1().click();
 		Thread.sleep(2000);
 
 		Set<String> IDs = driver.getWindowHandles();
@@ -79,7 +74,7 @@ FileUtility fUtil = new FileUtility();
 
 			if (driver.getCurrentUrl().contains("Accounts")) {
 				Thread.sleep(5000);
-				driver.findElement(By.id("1")).click();
+				ncp.getOrgName().click();
 				break;
 			}
 		}
@@ -87,31 +82,12 @@ FileUtility fUtil = new FileUtility();
 //		Step 6> come back to home/Parent page
 		driver.switchTo().window(PID);
 
-		driver.findElement(By.cssSelector("input[title='Save [Alt+S]']")).click();
-		Thread.sleep(1000);
-		String fNameField = driver.findElement(By.id("dtlview_First Name")).getText();
-
-		if (fNameField.equals(firstName)) {
-			System.out.println("Created Contect First name Successfully!!!");
-		} else {
-			System.out.println("Failed...");
-		}
-
-		WebElement profilePic = driver.findElement(By.cssSelector("img[src='themes/softed/images/user.PNG']"));
+		cp.getSavebtn().click();
 		
-		WebDriverUtility wdUtil = new WebDriverUtility(driver);
+		verifyContPage vcp = new verifyContPage(driver);
+		String fNameField =vcp.getFnameField().getText();
 		
-		//Actions act = new Actions(driver);
-		//act.moveToElement(profilePic).build().perform();
-		wdUtil.hover(profilePic);
+		Assert.assertEquals(fNameField, firstName);
 		
-		Thread.sleep(3000);
-		
-		
-		driver.findElement(By.linkText("Sign Out")).click();
-		Thread.sleep(3000);
-
-		driver.quit();
-
 	}
 }
