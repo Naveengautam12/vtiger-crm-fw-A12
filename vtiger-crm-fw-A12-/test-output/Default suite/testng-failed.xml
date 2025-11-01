@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="working_with_assertion.SoftAssertDemo">
+      <class name="listeners_extra.JustToProve1">
         <methods>
           <include name="case1"/>
         </methods>
-      </class> <!-- working_with_assertion.SoftAssertDemo -->
+      </class> <!-- listeners_extra.JustToProve1 -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

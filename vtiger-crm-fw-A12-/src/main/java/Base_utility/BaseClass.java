@@ -10,10 +10,17 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
 
 import generic_utility.FileUtility;
+import generic_utility.JavaUtility;
 import generic_utility.WebDriverUtility;
 import object_repository.HomePage;
 import object_repository.LoginPage;
@@ -21,6 +28,25 @@ import object_repository.LoginPage;
 public class BaseClass {
 
 	public WebDriver driver;
+	public ExtentReports report;
+	
+	@BeforeSuite 
+	public void  repConfig() {
+		String rep = JavaUtility.currentTime();
+		
+		ExtentSparkReporter spark = new ExtentSparkReporter("./ad_reports/"+ rep  +".html");
+		spark.config().setDocumentTitle("sauce demo");
+		spark.config().setReportName("Second Report");
+		spark.config().setTheme(Theme.DARK);
+		
+		report = new ExtentReports();
+		report.attachReporter(spark);
+		report.setSystemInfo("Browser", "Chrome");
+		report.setSystemInfo("OS", "Window");
+		report.setSystemInfo("UserName", "standard_user");
+		
+	}
+	
 	@BeforeClass
 	public void openBro() throws IOException {
 		
@@ -70,5 +96,9 @@ public class BaseClass {
 		driver.quit();
 	}
 	
-
+	@AfterSuite
+	public void repBackup() {
+		report.flush();
+		
+	}
 }
